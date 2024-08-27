@@ -1,5 +1,4 @@
 import pandas as pd
-import xlrd
 df = pd.read_excel('dados/filademandareprimidaservico26_08_2024.xlsx')
 
 
