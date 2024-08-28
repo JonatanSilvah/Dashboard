@@ -4,6 +4,7 @@ from utils import convert_csv, mensagem_sucesso
 import pandas as pd
 
 
+st.set_page_config(page_title='Base de dados')
 
 st.title('Fila de espera de exames especializados Pouso Alegre')
 
@@ -14,18 +15,18 @@ with st.expander('Colunas'):
         Colunas = st.multiselect(
             'Selecione as Colunas',
             list(df.columns),
-            list(df.columns),
             placeholder='Colunas'
         )
     else:
         Colunas = st.multiselect(
             'Selecione as Colunas',
             list(df.columns),
+            list(df.columns),
             placeholder='Colunas'
         )
 
 
-df_result_search = pd.DataFrame() 
+
 
 
 nome_busca = st.sidebar.text_input("Nome do paciente")
@@ -36,34 +37,37 @@ prontuario_busca = st.sidebar.text_input("Prontuario")
 
 if st.sidebar.button("Buscar"):
     if nome_busca != '' and prontuario_busca == '':
-        df = df[df['Nome do paciente'].str.contains(nome_busca, case=False, na=False)]
+        if len(df[df['Nome do paciente'].str.contains(nome_busca, case=False, na=False)]) > 0:
+            df = df[df['Nome do paciente'].str.contains(nome_busca, case=False, na=False)]
+        else:
+            st.warning('Paciente não encontrado')
     elif nome_busca == '' and prontuario_busca != '':
-        df = df[df['Prontuario'].str.contains(prontuario_busca, case=False, na=False)]
+        if len(df[df['Prontuario'].str.contains(prontuario_busca, case=False, na=False)]) > 0:
+            df = df[df['Prontuario'].str.contains(prontuario_busca, case=False, na=False)]
+        else:
+            st.warning('Prontuario não encontrado')
     elif nome_busca != '' and prontuario_busca != '':
         df = df[(df['Nome do paciente'].str.contains(nome_busca, case=False, na=False)) & (df['Prontuario'].str.contains(prontuario_busca, case=False, na=False))]
-    else:
-        st.warning('Por favor digite um nome ou prontaurio')
-st.write("{} Records ".format(str(df_result_search.shape[0])))
 
 
 st.sidebar.title('Filtros')
 
 
 with st.sidebar.expander('Nome procedimento'):
-    
-    all_options = st.checkbox("Selecionar todos os procedimentos")
+    all_options = st.checkbox('Selecionar todos')
     if all_options:
         procedimentos = st.multiselect(
         'Selecione o procedimento',
         df['Nome procedimento'].unique(),
-        df['Nome procedimento'].unique(),
+
         placeholder='Procedimento',
+ 
     )
     else:
         procedimentos = st.multiselect(
         'Selecione o procedimento',
         df['Nome procedimento'].unique(),
-        
+        df['Nome procedimento'].unique(),
 
         placeholder='Procedimento',
         )
